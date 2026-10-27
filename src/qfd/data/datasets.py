@@ -31,8 +31,10 @@ class Dataset:
 def load_ulb(path: Path) -> Dataset:
     """Load the ULB credit-card fraud dataset (Kaggle ``creditcard.csv``).
 
-    Duplicate rows are dropped, rows are sorted by ``Time`` and ``Amount`` is
-    log-transformed. ``V1``-``V28`` keep their original PCA order.
+    Columns are parsed with an explicit schema because the file mixes integer
+    and scientific notation in ``Time`` and quotes ``Class``. Duplicate rows
+    are dropped, rows are sorted by ``Time`` and ``Amount`` is log-transformed.
+    ``V1``-``V28`` keep their original PCA order.
 
     Args:
         path: Path to ``creditcard.csv``.
@@ -44,12 +46,12 @@ def load_ulb(path: Path) -> Dataset:
         FileNotFoundError: If the file does not exist.
     """
     if not path.is_file():
-        raise FileNotFoundError(
-            f"{path} not found. Download creditcard.csv from "
-            "https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud into data/raw/."
-        )
+        raise FileNotFoundError(f"{path} not found. Run: qfd download ulb")
     df = (
-        pl.read_csv(path)
+        pl.read_csv(path, infer_schema=False)
+        .with_columns(
+            pl.all().exclude("Class").cast(pl.Float64), pl.col("Class").cast(pl.Int64)
+        )
         .unique(maintain_order=True)
         .sort("Time")
         .with_columns(pl.col("Amount").log1p())

@@ -63,6 +63,6 @@ def test_cli_runs_config(tmp_path: Path) -> None:
     text = Path("configs/classical/smoke.yaml").read_text()
     config_path.write_text(text + f"output_dir: {tmp_path / 'out'}\n")
 
-    main(["run", str(config_path), "--log-level", "WARNING"])
+    main(["--log-level", "WARNING", "run", str(config_path)])
 
     assert next((tmp_path / "out").rglob("results.jsonl")).exists()

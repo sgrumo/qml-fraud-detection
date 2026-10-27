@@ -58,10 +58,22 @@ pre-commit install --hook-type pre-commit --hook-type pre-push
 
 ## Data
 
-Download `creditcard.csv` from the
-[ULB Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
-into `data/raw/`. Raw data is git-ignored. Smoke configs use synthetic data and
-need no download.
+The [ULB Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
+is downloaded with a Kaggle API token. Create one under *API* at
+<https://www.kaggle.com/settings/api> and set it in `.env`:
+
+```bash
+KAGGLE_API_TOKEN=<your token>
+```
+
+Then:
+
+```bash
+qfd download ulb
+```
+
+This writes `data/raw/creditcard.csv` and its SHA-256 (`creditcard.csv.sha256`).
+Raw data is git-ignored. Smoke configs use synthetic data and need no download.
 
 ## Running experiments
 
