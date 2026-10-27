@@ -1,0 +1,22 @@
+# Study 5 (docs/06 section 11): finite shots and depolarising noise.
+name: ulb-noisy-q4
+stage: simulation
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 4
+  reduction: pca
+subsample:
+  n_train: 150
+  fraud_rate: 0.1
+  test_negative_rate: 0.05
+device:
+  backend: default.mixed
+  shots: 1024
+  depolarizing: 0.01
+models:
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 1, bandwidth: 0.5, nu: 0.05}
+repetitions: 5
+seed: 0

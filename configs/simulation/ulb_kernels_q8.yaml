@@ -1,0 +1,26 @@
+# Study 1 (docs/06 section 7): main comparison, exact statevector simulation.
+name: ulb-quantum-kernels-q8
+stage: simulation
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 8
+  reduction: pca
+subsample:
+  n_train: 500
+  fraud_rate: 0.05
+  test_negative_rate: 1.0
+device:
+  backend: statevector
+models:
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 2, bandwidth: 0.2, nu: 0.05}
+  - name: qocsvm
+    params: {feature_map: angle, reps: 1, bandwidth: 0.2, nu: 0.05}   # classically trivial control
+  - name: qsvc
+    params: {feature_map: iqp, reps: 2, bandwidth: 0.2, C: 1.0}
+  - name: vqc
+    params: {layers: 3, epochs: 20, learning_rate: 0.05}
+repetitions: 10
+seed: 0

@@ -1,0 +1,24 @@
+# Conda environment for the qfd project.
+# Conda provides Python and compiled libraries that need OpenMP (xgboost,
+# lightgbm); every other dependency is declared once in pyproject.toml and
+# installed by pip below.
+#
+#   conda env create -f environment.yml
+#   conda activate qfd
+#
+# Hardware providers are opt-in extras:
+#   pip install -e ".[braket]"    # AWS Braket
+#   pip install -e ".[google]"    # Google Cirq / qsim / Quantum Engine
+#   pip install -e ".[dwave]"     # D-Wave Leap
+name: qfd
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - pip
+  - llvm-openmp
+  - xgboost>=2.1
+  - lightgbm>=4.5
+  - pip:
+      - -e .[dev]

@@ -1,0 +1,24 @@
+# Classical baselines restricted to the quantum budget (same q and n as simulation).
+name: ulb-classical-matched-q8
+stage: classical
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 8
+  reduction: pca
+subsample:
+  n_train: 500
+  fraud_rate: 0.05
+  test_negative_rate: 1.0
+models:
+  - name: logistic_regression
+  - name: svm_rbf
+    params: {C: 1.0, gamma: scale}
+  - name: ocsvm_rbf
+    params: {nu: 0.05, gamma: scale}
+  - name: isolation_forest
+  - name: ecod
+  - name: xgboost
+repetitions: 10
+seed: 0

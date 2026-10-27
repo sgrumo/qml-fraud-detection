@@ -1,0 +1,23 @@
+# Fast end-to-end check of quantum models on synthetic data.
+name: simulation-smoke
+stage: simulation
+data:
+  source: synthetic
+preprocessing:
+  n_features: 3
+  reduction: pca
+subsample:
+  n_train: 60
+  fraud_rate: 0.2
+  test_negative_rate: 0.1
+device:
+  backend: statevector
+models:
+  - name: qsvc
+    params: {feature_map: iqp, reps: 2, bandwidth: 0.5, C: 1.0}
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 2, bandwidth: 0.5, nu: 0.1}
+  - name: vqc
+    params: {layers: 2, epochs: 2, batch_size: 16}
+repetitions: 1
+seed: 0

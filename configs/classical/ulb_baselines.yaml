@@ -1,0 +1,23 @@
+# Study 0 (docs/06 section 7): unconstrained classical reference on ULB.
+name: ulb-classical-full
+stage: classical
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+  val_fraction: 0.1
+  test_fraction: 0.3
+preprocessing:
+  n_features: 29
+  reduction: first
+subsample:
+  n_train: null          # full training period
+  test_negative_rate: 1.0
+models:
+  - name: logistic_regression
+  - name: random_forest
+  - name: xgboost
+  - name: lightgbm
+  - name: isolation_forest
+  - name: ecod
+repetitions: 1
+seed: 0

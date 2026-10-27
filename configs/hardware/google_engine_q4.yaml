@@ -1,0 +1,26 @@
+# Google Quantum Engine (requires a project approved by Google Quantum AI).
+# Run with --allow-hardware.
+name: google-engine-q4
+stage: hardware
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 4
+  reduction: pca
+subsample:
+  n_train: 20
+  fraud_rate: 0.1
+  test_negative_rate: 0.002
+device:
+  backend: google_engine
+  shots: 1000
+  options:
+    project_id: your-gcp-project
+    processor_id: your-processor
+models:
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 1, bandwidth: 0.5, nu: 0.1}
+repetitions: 1
+seed: 0
+max_hardware_circuits: 10000   # about 190 Gram + 20 x n_test scoring circuits

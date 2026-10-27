@@ -1,0 +1,24 @@
+# D-Wave: QUBO feature selection on the annealer, then classical and simulated
+# quantum models on the selected features. Use qubo_sampler: simulated for the
+# classical-solver control. Needs DWAVE_API_TOKEN.
+name: dwave-qubo-selection-q8
+stage: hardware
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 8
+  reduction: qubo
+  qubo_sampler: qpu
+subsample:
+  n_train: 500
+  fraud_rate: 0.05
+device:
+  backend: statevector
+models:
+  - name: logistic_regression
+  - name: xgboost
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 2, bandwidth: 0.2, nu: 0.05}
+repetitions: 10
+seed: 0

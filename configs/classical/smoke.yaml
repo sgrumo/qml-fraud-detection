@@ -1,0 +1,16 @@
+# Fast end-to-end check on synthetic data (no download needed).
+name: classical-smoke
+stage: classical
+data:
+  source: synthetic
+preprocessing:
+  n_features: 4
+  reduction: pca
+subsample:
+  n_train: 500
+  fraud_rate: 0.05
+models:
+  - name: logistic_regression
+  - name: isolation_forest
+repetitions: 2
+seed: 0

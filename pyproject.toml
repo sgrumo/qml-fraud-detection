@@ -1,0 +1,129 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "qfd"
+version = "0.1.0"
+description = "Quantum machine learning for fraud detection: classical baselines, simulated and hardware quantum models."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+authors = [{ name = "Samuele Medici" }]
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.13",
+    "scikit-learn>=1.5",
+    "polars>=1.20",
+    "pyyaml>=6.0",
+    "orjson>=3.10",
+    "python-dotenv>=1.0",
+    "tqdm>=4.66",
+    "xgboost>=2.1",
+    "lightgbm>=4.5",
+    "pyod>=2.0",
+    "pennylane>=0.42",
+    "dimod>=0.12",
+    "dwave-samplers>=1.4",
+]
+
+[project.optional-dependencies]
+braket = ["amazon-braket-pennylane-plugin>=1.30"]
+google = ["pennylane-cirq>=0.42", "qsimcirq>=0.21", "cirq-google>=1.4", "ply>=3.11"]
+dwave = ["dwave-system>=1.26"]
+hardware = ["qfd[braket,google,dwave]"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "pre-commit>=3.8",
+    "types-PyYAML",
+    "types-tqdm",
+]
+
+[project.scripts]
+qfd = "qfd.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/qfd"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["docs"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "SIM",      # simplify
+    "C4",       # comprehensions
+    "PL",       # pylint (incl. max 5 args)
+    "RUF",
+    "D",        # pydocstyle
+    "ANN",      # type annotations
+    "BLE",      # no blind except
+    "T20",      # no print
+    "PTH",      # pathlib
+]
+ignore = [
+    "D105",     # magic methods
+    "D107",     # __init__ documented on the class
+    "PLR2004",  # magic values in comparisons
+    "N803",     # sklearn-style X argument names
+    "N806",     # sklearn-style X variable names
+]
+
+[tool.ruff.lint.pylint]
+max-args = 5
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "ANN", "PLR2004", "S101", "PLC0415"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["qfd"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "pennylane.*",
+    "sklearn.*",
+    "scipy.*",
+    "xgboost.*",
+    "lightgbm.*",
+    "pyod.*",
+    "braket.*",
+    "cirq.*",
+    "cirq_google.*",
+    "networkx.*",
+]
+ignore_missing_imports = true
+
+# Ocean ships partial type hints; treat it as untyped to avoid false positives.
+[[tool.mypy.overrides]]
+module = ["dimod", "dimod.*", "dwave", "dwave.*"]
+follow_imports = "skip"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m 'not hardware'"
+markers = [
+    "slow: long-running simulation tests",
+    "hardware: submits jobs to real quantum hardware (costs money, needs credentials)",
+]
+
+[tool.coverage.run]
+source = ["qfd"]

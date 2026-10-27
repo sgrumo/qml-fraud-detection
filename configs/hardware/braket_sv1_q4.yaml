@@ -1,0 +1,25 @@
+# AWS Braket. SV1 is a paid managed simulator; swap device_arn for a QPU
+# (for example IonQ or IQM) once the pipeline works. Run with --allow-hardware.
+name: braket-sv1-q4
+stage: hardware
+data:
+  source: ulb
+  path: data/raw/creditcard.csv
+preprocessing:
+  n_features: 4
+  reduction: pca
+subsample:
+  n_train: 20
+  fraud_rate: 0.1
+  test_negative_rate: 0.002
+device:
+  backend: braket
+  shots: 500
+  options:
+    device_arn: arn:aws:braket:::device/quantum-simulator/amazon/sv1
+models:
+  - name: qocsvm
+    params: {feature_map: iqp, reps: 1, bandwidth: 0.5, nu: 0.1}
+repetitions: 1
+seed: 0
+max_hardware_circuits: 10000   # about 190 Gram + 20 x n_test scoring circuits
